@@ -27,8 +27,8 @@ module DataParser
       name = scenario[:name]
       pass = true
       steps = scenario[:before].to_a +
-          scenario[:steps].to_a +
-          scenario[:after].to_a
+              scenario[:steps].to_a +
+              scenario[:after].to_a
       steps.each { |step| pass &&= step[:result][:status].eql?('passed') }
       { name: name, status: pass }
     end
