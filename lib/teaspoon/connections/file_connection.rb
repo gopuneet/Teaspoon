@@ -3,8 +3,6 @@ require 'fileutils'
 require 'json'
 
 class FileConnection < DBConnection
-  include FileUtils
-
   def initialize(data)
     @directory = data[:url]
     @epochs = @directory + 'epoch_ids.json'
