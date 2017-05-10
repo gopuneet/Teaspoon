@@ -1,6 +1,6 @@
-require 'mysql_connection'
-require 'redis_connection'
-require 'file_connection'
+require 'teaspoon/connections/mysql_connection'
+require 'teaspoon/connections/redis_connection'
+require 'teaspoon/connections/file_connection'
 
 module ConnectionFactory
   @connection_classes = {

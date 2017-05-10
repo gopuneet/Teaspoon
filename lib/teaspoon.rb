@@ -1,7 +1,7 @@
+require 'dotenv'
 require 'teaspoon/version'
 require 'teaspoon/connections/connection_factory'
 require 'teaspoon/data_parser'
-require 'dotenv'
 
 module Teaspoon
   def self.measure(file_path, branch_name)

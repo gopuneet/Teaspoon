@@ -1,5 +1,5 @@
 require 'mysql'
-require 'db_connection'
+require 'teaspoon/connections/db_connection'
 
 class MysqlConnection < DBConnection
   def initialize(data)
@@ -27,7 +27,7 @@ class MysqlConnection < DBConnection
   private
 
   def configure
-    File.open('./Create.sql').read.split("\n").each { |q| @db.query(q) }
+    File.open('teaspoon/Create.sql').read.split("\n").each { |q| @db.query(q) }
   end
 
   def save_id(id_name, value)

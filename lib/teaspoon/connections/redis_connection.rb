@@ -1,5 +1,5 @@
 require 'redis'
-require 'db_connection'
+require 'teaspoon/connections/db_connection'
 
 class RedisConnection < DBConnection
   def initialize(data)

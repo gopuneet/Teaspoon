@@ -1,4 +1,4 @@
-require 'db_connection'
+require 'teaspoon/connections/db_connection'
 require 'fileutils'
 require 'json'
 
