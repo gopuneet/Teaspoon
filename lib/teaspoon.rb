@@ -4,7 +4,7 @@ require 'teaspoon/connections/connection_factory'
 require 'teaspoon/data_parser'
 
 module Teaspoon
-  def self.measure(file_path, branch_name)
+  def self.measure(file_path, branch_name = 'master')
     epoch = Time.now.to_i
     statuses = DataParser.statuses(file_path)
     @conn = ConnectionFactory.create

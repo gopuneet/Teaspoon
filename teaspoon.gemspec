@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Daniel Giralt']
   spec.email         = ['daniel.giralt.len@gmail.com']
 
-  spec.summary       = 'Saves execution data of cucumber'
-  spec.description   = 'bla bla'
+  spec.summary       = 'Saves execution data of cucumber over time.'
+  spec.description   = 'Saves execution data of cucumber over time.'
   spec.homepage      = ''
 
   # Prevent pushing this gem to RubyGems.org.
