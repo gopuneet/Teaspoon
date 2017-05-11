@@ -44,4 +44,31 @@ class MysqlConnection < DBConnection
     query = "SELECT id FROM #{id_name}_ids WHERE #{id_name} = '#{value}';"
     @db.query(query).fetch_row.fetch(0)
   end
+
+  def data(constraints)
+    q = 'SELECT epoch, branch, scenario, success FROM scenarios AS s LEFT JOIN epoch_ids AS ei ON ei.id = s.epoch_id LEFT JOIN scenario_ids AS si ON s.scenario_id = si.id LEFT JOIN branch_ids AS bi ON s.branch_id = bi.id '
+    sq = 'WHERE '
+    [:epoch, :branch, :scenario].each { |c| sq += "#{c}='#{constraints[c]}' AND " if constraints.key?(c)}
+    q += sq.chomp('AND ') unless sq.eql?('WHERE ')
+    q += ';'
+    result_to_hash(@db.query(q))
+  end
+
+  def ids(constraints)
+    key = constraints[:key]
+    q = "SELECT #{key} FROM #{key}_ids"
+    result_to_array(@db.query(q))
+  end
+
+  def result_to_hash(result)
+    out = []
+    result.each_hash { |row| out.push(row) }
+    out
+  end
+
+  def result_to_array(result)
+    out = []
+    result.each{ |row| out.push(row.first) }
+    out
+  end
 end
