@@ -15,7 +15,8 @@ module ConnectionFactory
     out_class.new(
       url: ENV["#{type}_URL"],
       user: ENV["#{type}_USER"],
-      password: ENV["#{type}_PASSWORD"]
+      password: ENV["#{type}_PASSWORD"],
+      db_name: ENV["#{type}_NAME"]
     )
   end
 end
