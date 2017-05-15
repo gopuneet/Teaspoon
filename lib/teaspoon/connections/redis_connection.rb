@@ -13,7 +13,7 @@ class RedisConnection < DBConnection
     branch_id = save_id('branch', branch_name)
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
-      key = "#{scenario_id}:#{branch_id}:#{epoch_id}"
+      key = "scenarios:#{scenario_id}:#{branch_id}:#{epoch_id}"
       @db.set(key, status[:status])
     end
   end
@@ -24,24 +24,32 @@ class RedisConnection < DBConnection
 
   private
 
-  def data(constraints)
-    epochs = get_ids(constraints[:epoch], 'epoch')
-    branches = get_ids(constraints[:branch], 'branch')
-    scenarios = get_ids(constraints[:scenario], 'scenario')
-    r = true
+  def data(constraints = {})
+    @@id_keys.each { |id| constraints[id] ||= ids(key: id) }
+    scenarios = pipeline_get('scenario', constraints[:scenario])
+    branches = pipeline_get('branch', constraints[:branch])
+    epochs = pipeline_get('epoch', constraints[:epoch])
+
+    keys_array = scenarios.product(branches, epochs)
+    keys = []
+    keys_array.each { |i| keys.push(i.join(':')) }
+
+    r = pipeline_get('scenarios', keys)
+
+    out = []
+    keys_array.each_with_index do |v, i|
+      out.push({
+          scenario: constraints[:scenario][scenarios.index(v[0])],
+          branch: constraints[:branch][branches.index(v[1])],
+          epoch: constraints[:epoch][epochs.index(v[2])],
+          result: r[i]
+      })
+    end
+    out.delete_if{ |v| v[:result].nil? }
+    out
   end
 
-  def get_ids(constraint, key)
-    return all_ids(key) if constraint.nil?
-    pipeline(key, constraint)
-  end
-
-  def all_ids(key)
-    values = ids(key: key)
-    pipeline(key, values)
-  end
-
-  def pipeline(key, values)
+  def pipeline_get(key, values)
     @db.pipelined { values.each { |v| @db.get("#{key}:#{v}")} }
   end
 
@@ -63,6 +71,6 @@ class RedisConnection < DBConnection
     id = @db.get("#{id_name}:#{@incremental_suffix}")
     was_set = @db.setnx("#{id_name}:#{value}", id)
     @db.incr("#{id_name}:#{@incremental_suffix}") if was_set
-    id
+    @db.get("#{id_name}:#{value}")
   end
 end
