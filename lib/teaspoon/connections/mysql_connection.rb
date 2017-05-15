@@ -67,8 +67,6 @@ class MysqlConnection < DBConnection
     out
   end
 
-  private
-
   def load_query_file(file_path)
     File.open(File.join(File.dirname(__FILE__), @commands_directory, file_path)).read
   end
