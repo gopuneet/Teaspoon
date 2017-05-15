@@ -24,6 +24,32 @@ class RedisConnection < DBConnection
 
   private
 
+  def data(constraints)
+    epochs = get_ids(constraints[:epoch], 'epoch')
+    branches = get_ids(constraints[:branch], 'branch')
+    scenarios = get_ids(constraints[:scenario], 'scenario')
+    r = true
+  end
+
+  def get_ids(constraint, key)
+    return all_ids(key) if constraint.nil?
+    pipeline(key, constraint)
+  end
+
+  def all_ids(key)
+    values = ids(key: key)
+    pipeline(key, values)
+  end
+
+  def pipeline(key, values)
+    @db.pipelined { values.each { |v| @db.get("#{key}:#{v}")} }
+  end
+
+  def ids(constraints)
+    q = "#{constraints[:key]}:values"
+    @db.smembers(q)
+  end
+
   def configure
     %w(epoch branch scenario).each { |id| configure_increment(id) }
   end

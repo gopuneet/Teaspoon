@@ -24,4 +24,6 @@ class DBConnection
   def self.ids?(constraints)
     constraints.key?(:key)
   end
+
+  @@id_keys = [:epoch, :scenario, :branch].freeze
 end

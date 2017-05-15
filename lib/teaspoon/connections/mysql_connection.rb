@@ -5,14 +5,14 @@ class MysqlConnection < DBConnection
   def initialize(data)
     @db = Mysql.connect(data[:url], data[:user], data[:password])
     @db_name = data[:db_name]
+    @commands_directory = 'mysql_commands'
     super
   end
 
   def save(statuses, branch_name, timestamp)
     branch_id = save_id('branch', branch_name)
     epoch_id = save_id('epoch', timestamp)
-    query = 'INSERT INTO scenarios '\
-            '(branch_id, scenario_id, epoch_id, success) VALUES'
+    query = load_query_file('save.sql')
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
       query += "(#{branch_id}, #{scenario_id}, "\
@@ -28,14 +28,8 @@ class MysqlConnection < DBConnection
   private
 
   def configure
-    ["CREATE SCHEMA IF NOT EXISTS `#{@db_name}` ;",
-    "USE `#{@db_name}` ;",
-    "CREATE TABLE IF NOT EXISTS `#{@db_name}`.`epoch_ids` ( `epoch` INT NOT NULL UNIQUE, `id` INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (`id`)) ;",
-    "CREATE TABLE IF NOT EXISTS `#{@db_name}`.`scenario_ids` ( `scenario` VARCHAR(255) NOT NULL UNIQUE, `id` INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (`id`)) ;",
-    "CREATE TABLE IF NOT EXISTS `#{@db_name}`.`branch_ids` ( `branch` VARCHAR(255) NOT NULL UNIQUE, `id` INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (`id`)) ;",
-    "CREATE TABLE IF NOT EXISTS `#{@db_name}`.`scenarios` ( `scenario_id` INT NOT NULL, `epoch_id` INT NOT NULL, `branch_id` INT NOT NULL, `success` TINYINT(1) NOT NULL, FOREIGN KEY (scenario_id) REFERENCES scenario_ids(id) ON DELETE CASCADE, FOREIGN KEY (epoch_id) REFERENCES epoch_ids(id) ON DELETE CASCADE, FOREIGN KEY (branch_id) REFERENCES branch_ids(id) ON DELETE CASCADE);"].each do |q|
-      @db.query(q)
-    end
+    commands = load_query_file('configure.sql').gsub!('@db_name', @db_name).split("\n")
+    commands.each{ |q| @db.query(q) }
   end
 
   def save_id(id_name, value)
@@ -46,11 +40,12 @@ class MysqlConnection < DBConnection
   end
 
   def data(constraints)
-    q = 'SELECT epoch, branch, scenario, success FROM scenarios AS s LEFT JOIN epoch_ids AS ei ON ei.id = s.epoch_id LEFT JOIN scenario_ids AS si ON s.scenario_id = si.id LEFT JOIN branch_ids AS bi ON s.branch_id = bi.id '
-    sq = 'WHERE '
-    [:epoch, :branch, :scenario].each { |c| sq += "#{c}='#{constraints[c]}' AND " if constraints.key?(c)}
-    q += sq.chomp('AND ') unless sq.eql?('WHERE ')
-    q += ';'
+    q = load_query_file('data.sql')
+    sq = []
+    @@id_keys.each do |c|
+      sq.push("#{c} IN (#{constraints[c].map{ |e| "'#{e}'" }.join(', ')}) ") if constraints.key?(c)
+    end
+    q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
     result_to_hash(@db.query(q))
   end
 
@@ -70,5 +65,11 @@ class MysqlConnection < DBConnection
     out = []
     result.each{ |row| out.push(row.first) }
     out
+  end
+
+  private
+
+  def load_query_file(file_path)
+    File.open(File.join(File.dirname(__FILE__), @commands_directory, file_path)).read
   end
 end
