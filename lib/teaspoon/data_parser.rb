@@ -13,7 +13,7 @@ module DataParser
 
   class StatusParser
     def status(scenario)
-      name = scenario[:name]
+      name = "#{scenario[:name]}:#{scenario[:line]}"
       pass = true
       steps = scenario[:before].to_a +
               scenario[:steps].to_a +

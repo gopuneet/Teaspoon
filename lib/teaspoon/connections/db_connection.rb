@@ -1,5 +1,4 @@
 class DBConnection
-
   def save(statuses, branch_name, timestamp); end
 
   def close; end
@@ -21,9 +20,13 @@ class DBConnection
 
   def ids(_); end
 
-  def self.ids?(constraints)
-    constraints.key?(:key)
-  end
-
   @@id_keys = [:epoch, :scenario, :branch].freeze
+
+  class << self
+    protected
+
+    def ids?(constraints)
+      constraints.key?(:key)
+    end
+  end
 end

@@ -38,19 +38,17 @@ class RedisConnection < DBConnection
 
     out = []
     keys_array.each_with_index do |v, i|
-      out.push({
-          scenario: constraints[:scenario][scenarios.index(v[0])],
-          branch: constraints[:branch][branches.index(v[1])],
-          epoch: constraints[:epoch][epochs.index(v[2])],
-          result: r[i]
-      })
+      out.push(scenario: constraints[:scenario][scenarios.index(v[0])],
+               branch: constraints[:branch][branches.index(v[1])],
+               epoch: constraints[:epoch][epochs.index(v[2])],
+               result: r[i])
     end
-    out.delete_if{ |v| v[:result].nil? }
+    out.delete_if { |v| v[:result].nil? }
     out
   end
 
   def pipeline_get(key, values)
-    @db.pipelined { values.each { |v| @db.get("#{key}:#{v}")} }
+    @db.pipelined { values.each { |v| @db.get("#{key}:#{v}") } }
   end
 
   def ids(constraints)

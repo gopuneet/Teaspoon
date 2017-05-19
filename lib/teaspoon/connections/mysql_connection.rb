@@ -29,7 +29,7 @@ class MysqlConnection < DBConnection
 
   def configure
     commands = load_query_file('configure.sql').gsub!('@db_name', @db_name).split("\n")
-    commands.each{ |q| @db.query(q) }
+    commands.each { |q| @db.query(q) }
   end
 
   def save_id(id_name, value)
@@ -43,7 +43,7 @@ class MysqlConnection < DBConnection
     q = load_query_file('data.sql')
     sq = []
     @@id_keys.each do |c|
-      sq.push("#{c} IN (#{constraints[c].map{ |e| "'#{e}'" }.join(', ')}) ") if constraints.key?(c)
+      sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") if constraints.key?(c)
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
     result_to_hash(@db.query(q))
@@ -63,7 +63,7 @@ class MysqlConnection < DBConnection
 
   def result_to_array(result)
     out = []
-    result.each{ |row| out.push(row.first) }
+    result.each { |row| out.push(row.first) }
     out
   end
 

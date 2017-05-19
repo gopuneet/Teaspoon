@@ -17,7 +17,7 @@ class FileConnection < DBConnection
     statuses.each { |status| out.push(status) }
     out = JSON.generate(out)
     File.open("#{status_directory}#{timestamp}.json", 'w')
-        .write(JSON.generate(out))
+        .write(out)
   end
 
   def close

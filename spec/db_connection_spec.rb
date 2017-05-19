@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe DBConnection do
-
   before(:each) do
     @db = DBConnection.new({})
   end

@@ -6,7 +6,7 @@ require 'teaspoon/data_parser'
 
 module Teaspoon
   def self.pour(file_path, branch_name = 'master')
-    epoch = TeaTimer.time
+    epoch = Tea.time
     statuses = DataParser.statuses(file_path)
     @conn = ConnectionFactory.create
     @conn.save(statuses, branch_name, epoch)
