@@ -44,7 +44,6 @@ class RedisConnection < DBConnection
                result: r[i])
     end
     out.delete_if { |v| v[:result].nil? }
-    out
   end
 
   def pipeline_get(key, values)

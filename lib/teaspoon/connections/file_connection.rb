@@ -30,15 +30,13 @@ class FileConnection < DBConnection
     FileUtils.mkdir_p(@directory)
   end
 
-  def data(constraints)
+  def data(constraints = {})
     branches = constraints[:branch] || ids('branch')
     epochs = constraints[:epoch] || ids('epoch')
-
     out = []
     branches.each do |branch|
-      dir = "#{@directory}#{branch}/"
       epochs.each do |epoch|
-        file_path = "#{dir}#{epoch}.json"
+        file_path = "#{@directory}#{branch}/#{epoch}.json"
         next unless File.exist?(file_path)
         out.push(branch: branch, epoch: epoch, scenarios: File.open(file_path).read)
       end
@@ -53,7 +51,7 @@ class FileConnection < DBConnection
 
   def branches
     Dir.entries('cucumber_history').select do |entry|
-      File.directory? File.join('cucumber_history', entry) && !(entry =='.' || entry == '..')
+      File.directory?(File.join('cucumber_history', entry) && !(entry.eql?('.') || entry.eql('..')))
     end
   end
 end
