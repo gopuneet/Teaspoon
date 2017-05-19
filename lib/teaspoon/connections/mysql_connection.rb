@@ -46,7 +46,7 @@ class MysqlConnection < DBConnection
       sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") if constraints.key?(c)
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
-    result_to_hash(@db.query(q))
+    result_to_hash(@db.query(q)).each { |tuple| tuple[:status] = tuple[:status].eql?(1) }
   end
 
   def ids(key)
