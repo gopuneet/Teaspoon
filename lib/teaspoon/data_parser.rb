@@ -13,7 +13,7 @@ module DataParser
 
   class StatusParser
     def status(scenario)
-      name = scenario[:name]
+      name = sanitize("#{scenario[:name]}:#{scenario[:line]}")
       pass = true
       steps = scenario[:before].to_a +
               scenario[:steps].to_a +
@@ -27,6 +27,10 @@ module DataParser
       data = report.read
       report.close
       JSON.parse(data, symbolize_names: true)
+    end
+
+    def sanitize(string)
+      string.gsub(/(\'|\"|\.|\*|\/|\-|\\)/) { |match| "\\#{match}" }
     end
   end
 end

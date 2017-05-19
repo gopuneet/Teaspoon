@@ -13,7 +13,7 @@ class RedisConnection < DBConnection
     branch_id = save_id('branch', branch_name)
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
-      key = "#{scenario_id}:#{branch_id}:#{epoch_id}"
+      key = "scenarios:#{scenario_id}:#{branch_id}:#{epoch_id}"
       @db.set(key, status[:status])
     end
   end
@@ -23,6 +23,37 @@ class RedisConnection < DBConnection
   end
 
   private
+
+  def data(constraints = {})
+    @@id_keys.each { |id| constraints[id] ||= ids(id) }
+    scenarios = pipeline_get('scenario', constraints[:scenario])
+    branches = pipeline_get('branch', constraints[:branch])
+    epochs = pipeline_get('epoch', constraints[:epoch])
+
+    keys_array = scenarios.product(branches, epochs)
+    keys = []
+    keys_array.each { |i| keys.push(i.join(':')) }
+
+    r = pipeline_get('scenarios', keys)
+
+    out = []
+    keys_array.each_with_index do |v, i|
+      out.push(scenario: constraints[:scenario][scenarios.index(v[0])],
+               branch: constraints[:branch][branches.index(v[1])],
+               epoch: constraints[:epoch][epochs.index(v[2])],
+               result: r[i])
+    end
+    out.delete_if { |v| v[:result].nil? }
+  end
+
+  def pipeline_get(key, values)
+    @db.pipelined { values.each { |v| @db.get("#{key}:#{v}") } }
+  end
+
+  def ids(key)
+    q = "#{key}:values"
+    @db.smembers(q)
+  end
 
   def configure
     %w(epoch branch scenario).each { |id| configure_increment(id) }
@@ -37,6 +68,6 @@ class RedisConnection < DBConnection
     id = @db.get("#{id_name}:#{@incremental_suffix}")
     was_set = @db.setnx("#{id_name}:#{value}", id)
     @db.incr("#{id_name}:#{@incremental_suffix}") if was_set
-    id
+    @db.get("#{id_name}:#{value}")
   end
 end
