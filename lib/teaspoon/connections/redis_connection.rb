@@ -25,7 +25,7 @@ class RedisConnection < DBConnection
   private
 
   def data(constraints = {})
-    @@id_keys.each { |id| constraints[id] ||= ids(key: id) }
+    @@id_keys.each { |id| constraints[id] ||= ids(id) }
     scenarios = pipeline_get('scenario', constraints[:scenario])
     branches = pipeline_get('branch', constraints[:branch])
     epochs = pipeline_get('epoch', constraints[:epoch])
