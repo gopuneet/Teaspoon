@@ -4,7 +4,7 @@ class DBConnection
   def close; end
 
   def retrieve(constraints)
-    return ids(constraints) if self.class.ids?(constraints)
+    return ids(constraints[:key]) if self.class.method(:ids?).call(constraints)
     data(constraints)
   end
 

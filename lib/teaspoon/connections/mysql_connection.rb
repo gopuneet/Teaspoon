@@ -49,8 +49,7 @@ class MysqlConnection < DBConnection
     result_to_hash(@db.query(q))
   end
 
-  def ids(constraints)
-    key = constraints[:key]
+  def ids(key)
     q = "SELECT #{key} FROM #{key}_ids"
     result_to_array(@db.query(q))
   end

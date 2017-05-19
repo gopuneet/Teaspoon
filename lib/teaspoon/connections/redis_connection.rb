@@ -51,8 +51,8 @@ class RedisConnection < DBConnection
     @db.pipelined { values.each { |v| @db.get("#{key}:#{v}") } }
   end
 
-  def ids(constraints)
-    q = "#{constraints[:key]}:values"
+  def ids(key)
+    q = "#{key}:values"
     @db.smembers(q)
   end
 
