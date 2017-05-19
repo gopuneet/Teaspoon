@@ -30,7 +30,7 @@ module DataParser
     end
 
     def sanitize(string)
-      string.gsub(/(\'|\"|\.|\*|\/|\-|\\)/) { |match| "\\#{match}" }
+      string.gsub(%r{\'|\"|\.|\*|\/|\-|\\}) { |match| "\\#{match}" }
     end
   end
 end
