@@ -31,7 +31,14 @@ Observe the `.env.dist` file to add relevant information. Copy to `.env` and fil
 Once installed, you can simply call it from within a Ruby application:
  
 ```ruby
-Teaspoon.measure(path_to_report, current_branch = 'master')
+Teaspoon.measure_and_pour(path_to_report, current_branch = 'master')
+```
+
+This method is also separated should you need only one of the two functionalities. This can be useful to `measure` client-side and `pour` server-side, so as to not send the whole report.
+
+```ruby
+Teaspoon.measure(path_to_report) #returns data
+Teaspoon.pour(data, current_branch = 'master') #stores data
 ```
 
 It could also be called after certain cucumber executions via bash, through an intermediate ruby script.
@@ -40,10 +47,23 @@ It could also be called after certain cucumber executions via bash, through an i
 #filename "measurer.rb"
 
 require 'teaspoon'
-Teaspoon.measure(ARGV[0], ARGV[1])
+Teaspoon.measure_and_pour(ARGV[0], ARGV[1])
 ```
 ```bash
 $ ruby measurer.rb "test_suite/logs/report.json" $CURRENT_BRANCH
+```
+
+Finally, to retrieve information from the database of your choice, use
+
+```ruby
+Teaspoon.spoonful(constraints)
+```
+
+where `constraints` is a Hash.
+* If `constraints` has the key `:key`, it will return the list of existing keys. `:key` can be either `'epoch'`, `'branch'`, or `'scenario'`.
+* Otherwise, `constraints` accepts three non-to-many arrays. For instance:
+```ruby
+Teaspoon.spoonful(epoch:[1495725862], branch:  ['master'], scenario: ['Login with basic user', 'Create Typeform', 'Pay with credit card'])
 ```
 
 ## Development
