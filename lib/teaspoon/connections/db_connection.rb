@@ -26,7 +26,7 @@ class DBConnection
     protected
 
     def ids?(constraints)
-      constraints.key?(:key)
+      !constraints[:key].nil?
     end
   end
 end
