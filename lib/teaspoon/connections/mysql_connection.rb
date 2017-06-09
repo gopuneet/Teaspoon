@@ -43,7 +43,7 @@ class MysqlConnection < DBConnection
     q = load_query_file('data.sql')
     sq = []
     @@id_keys.each do |c|
-      sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") if constraints.key?(c)
+      sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") unless constraints.fetch(c, []).empty?
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
     result_to_hash(@db.query(q)).each { |tuple| tuple[:status] = tuple[:status].eql?(1) }
