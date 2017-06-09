@@ -10,6 +10,7 @@ class MysqlConnection < DBConnection
   end
 
   def save(statuses, branch_name, timestamp)
+    super
     branch_id = save_id('branch', branch_name)
     epoch_id = save_id('epoch', timestamp)
     query = load_query_file('save.sql')

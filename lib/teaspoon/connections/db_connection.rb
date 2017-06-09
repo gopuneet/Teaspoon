@@ -1,5 +1,7 @@
 class DBConnection
-  def save(statuses, branch_name, timestamp); end
+  def save(statuses, branch_name, timestamp)
+    return if statuses.empty?
+  end
 
   def close; end
 

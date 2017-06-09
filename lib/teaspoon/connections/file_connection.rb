@@ -10,6 +10,7 @@ class FileConnection < DBConnection
   end
 
   def save(statuses, branch_name, timestamp)
+    super
     File.open(@epochs, 'a').write("#{timestamp},")
     status_directory = "#{@directory}#{branch_name}/"
     FileUtils.mkdir_p(status_directory)
