@@ -5,8 +5,8 @@ require 'teaspoon/connections/connection_factory'
 require 'teaspoon/data_parser'
 
 module Teaspoon
-  def self.measure(file_path)
-    DataParser.statuses(file_path)
+  def self.measure(report)
+    DataParser.statuses(report)
   end
 
   def self.pour(input, branch_name = 'master')
@@ -16,8 +16,8 @@ module Teaspoon
     @conn.close
   end
 
-  def self.measure_and_pour(file_path, branch_name = 'master')
-    input = measure(file_path)
+  def self.measure_and_pour(report, branch_name = 'master')
+    input = measure(report)
     pour(input, branch_name)
   end
 
