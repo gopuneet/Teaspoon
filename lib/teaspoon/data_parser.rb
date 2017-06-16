@@ -1,11 +1,10 @@
 require 'json'
 
 module DataParser
-  def self.statuses(file_path)
-    s = StatusParser.new
-    json = s.read_execution(file_path)
+  def self.statuses(report)
     out = []
-    json.each do |feature|
+    s = StatusParser.new
+    report.map do |feature|
       feature[:elements].each { |scenario| out.push(s.status(scenario)) }
     end
     out
