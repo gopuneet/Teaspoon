@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-RSpec.describe TeaTimer do
+RSpec.describe Tea do
   it 'should tell the epoch time' do
-    t = TeaTimer.time
-    expect(t.class).to be Integer
-    expect(t).to be > 1_494_495_943
+    t = Tea.time
+    expect(t.class).to be Fixnum
   end
 end

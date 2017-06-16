@@ -9,6 +9,7 @@ class RedisConnection < DBConnection
   end
 
   def save(statuses, branch_name, timestamp)
+    super
     epoch_id = save_id('epoch', timestamp)
     branch_id = save_id('branch', branch_name)
     statuses.each do |status|

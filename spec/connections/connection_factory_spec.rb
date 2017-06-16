@@ -7,7 +7,7 @@ RSpec.describe ConnectionFactory do
       REDIS: RedisConnection,
       FILES: FileConnection
     }.each do |key, type|
-      ENV['DATABASE_IN_USE'] = key.to_s
+      ENV['TEASPOON_DATABASE_IN_USE'] = key.to_s
       allow(type).to receive(:new).and_return(type)
       c = ConnectionFactory.create
       expect(c).to eq type
