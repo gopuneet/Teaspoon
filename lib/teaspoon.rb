@@ -9,8 +9,7 @@ module Teaspoon
     DataParser.statuses(file_path)
   end
 
-  def self.pour(input, branch_name = 'master')
-    epoch = Tea.time
+  def self.pour(input, branch_name = 'master', epoch = Tea.time)
     @conn = ConnectionFactory.create
     @conn.save(input, branch_name, epoch)
     @conn.close
@@ -19,6 +18,11 @@ module Teaspoon
   def self.measure_and_pour(file_path, branch_name = 'master')
     input = measure(file_path)
     pour(input, branch_name)
+  end
+
+  def self.measure_and_pour_in_time(file_path, branch_name = 'master', epoch)
+    input = measure(file_path)
+    pour(input, branch_name, epoch)
   end
 
   def self.spoonful(constraints = {})
