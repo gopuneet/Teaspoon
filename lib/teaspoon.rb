@@ -20,8 +20,8 @@ module Teaspoon
     pour(input, branch_name)
   end
 
-  def self.measure_and_pour_in_time(file_path, branch_name = 'master', epoch)
-    input = measure(file_path)
+  def self.measure_and_pour_in_time(report, branch_name = 'master', epoch)
+    input = measure(report)
     pour(input, branch_name, epoch)
   end
 
