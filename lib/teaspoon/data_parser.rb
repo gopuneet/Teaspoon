@@ -21,13 +21,6 @@ module DataParser
       { name: name, status: pass }
     end
 
-    def read_execution(file_path)
-      report = File.open(file_path)
-      data = report.read
-      report.close
-      JSON.parse(data, symbolize_names: true)
-    end
-
     def sanitize(string)
       string.gsub(%r{\'|\"|\.|\*|\/|\-|\\}) { |match| "\\#{match}" }
     end
