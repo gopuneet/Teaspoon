@@ -14,7 +14,8 @@ class RedisConnection < DBConnection
     branch_id = save_id('branch', branch_name)
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
-      key = "scenarios:#{scenario_id}:#{branch_id}:#{epoch_id}"
+      feature_id = save_id('feature', status[:feature])
+      key = "scenarios:#{scenario_id}:#{feature_id}:#{branch_id}:#{epoch_id}"
       @db.set(key, status[:success])
     end
   end
@@ -28,10 +29,11 @@ class RedisConnection < DBConnection
   def data(constraints = {})
     @@id_keys.each { |id| constraints[id] ||= ids(id) }
     scenarios = pipeline_get('scenario', constraints[:scenario])
+    features = pipeline_get('feature', constraints[:feature])
     branches = pipeline_get('branch', constraints[:branch])
     epochs = pipeline_get('epoch', constraints[:epoch])
 
-    keys_array = scenarios.product(branches, epochs)
+    keys_array = scenarios.product(features, branches, epochs)
     keys = []
     keys_array.each { |i| keys.push(i.join(':')) }
 
@@ -39,10 +41,11 @@ class RedisConnection < DBConnection
 
     out = []
     keys_array.each_with_index do |v, i|
-      out.push('scenario' => constraints[:scenario][scenarios.index(v[0])],
-               'branch' => constraints[:branch][branches.index(v[1])],
-               'epoch' => constraints[:epoch][epochs.index(v[2])].to_i,
-               'success' => r[i])
+      out.push('epoch' => constraints[:epoch][epochs.index(v[3])],
+               'branch' => constraints[:branch][branches.index(v[2])],
+               'scenario' => constraints[:scenario][scenarios.index(v[0])],
+               'success' => r[i].eql?('true'),
+               'feature' => constraints[:feature][features.index(v[1])])
     end
     out.delete_if { |v| v['success'].nil? }
   end
@@ -57,7 +60,7 @@ class RedisConnection < DBConnection
   end
 
   def configure
-    %w(epoch branch scenario).each { |id| configure_increment(id) }
+    %w(epoch branch scenario feature).each { |id| configure_increment(id) }
   end
 
   def configure_increment(increment_prefix)

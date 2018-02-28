@@ -22,7 +22,7 @@ class DBConnection
 
   def ids(_); end
 
-  @@id_keys = [:epoch, :scenario, :branch].freeze
+  @@id_keys = [:epoch, :scenario, :branch, :feature].freeze
 
   class << self
     protected
