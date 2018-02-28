@@ -36,7 +36,7 @@ class FileConnection < DBConnection
         file_path = "#{@directory}#{branch}/#{epoch}.json"
         next unless File.exist?(file_path)
         JSON.parse(File.read(file_path)).each do |scenario|
-          out.push('epoch' => epoch, 'branch' => branch, 'scenario' => scenario['name'], 'success' => scenario['success'])
+          out.push('epoch' => epoch, 'branch' => branch, 'scenario' => scenario['name'], 'success' => scenario['success'], 'feature' => scenario['feature'])
         end
       end
     end
