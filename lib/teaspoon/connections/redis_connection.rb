@@ -15,7 +15,7 @@ class RedisConnection < DBConnection
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
       key = "scenarios:#{scenario_id}:#{branch_id}:#{epoch_id}"
-      @db.set(key, status[:status])
+      @db.set(key, status[:success])
     end
   end
 
@@ -39,12 +39,12 @@ class RedisConnection < DBConnection
 
     out = []
     keys_array.each_with_index do |v, i|
-      out.push(scenario: constraints[:scenario][scenarios.index(v[0])],
-               branch: constraints[:branch][branches.index(v[1])],
-               epoch: constraints[:epoch][epochs.index(v[2])],
-               result: r[i])
+      out.push('scenario' => constraints[:scenario][scenarios.index(v[0])],
+               'branch' => constraints[:branch][branches.index(v[1])],
+               'epoch' => constraints[:epoch][epochs.index(v[2])].to_i,
+               'success' => r[i])
     end
-    out.delete_if { |v| v[:result].nil? }
+    out.delete_if { |v| v['success'].nil? }
   end
 
   def pipeline_get(key, values)

@@ -11,14 +11,10 @@ class FileConnection < DBConnection
 
   def save(statuses, branch_name, timestamp)
     super
-    File.open(@epochs, 'a').write("#{timestamp},")
+    File.write(@epochs, "#{timestamp},")
     status_directory = "#{@directory}#{branch_name}/"
     FileUtils.mkdir_p(status_directory)
-    out = []
-    statuses.each { |status| out.push(status) }
-    out = JSON.generate(out)
-    File.open("#{status_directory}#{timestamp}.json", 'w')
-        .write(out)
+    File.write("#{status_directory}#{timestamp}.json", JSON.generate(statuses))
   end
 
   def close
@@ -39,10 +35,9 @@ class FileConnection < DBConnection
       epochs.each do |epoch|
         file_path = "#{@directory}#{branch}/#{epoch}.json"
         next unless File.exist?(file_path)
-        data = JSON.parse(File.open(file_path).read, symbolize_names: true).each do |scenario|
-          out.push(branch: branch, epoch: epoch, scenario: scenario[:name], status: scenario[:status])
+        JSON.parse(File.read(file_path)).each do |scenario|
+          out.push('epoch' => epoch, 'branch' => branch, 'scenario' => scenario['name'], 'success' => scenario['success'])
         end
-        out.push(branch: branch, epoch: epoch, scenarios: data)
       end
     end
     out
