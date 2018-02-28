@@ -6,23 +6,19 @@ module DataParser
     s = StatusParser.new
     report.map do |feature|
       feature[:elements].each do |scenario|
-        parsed_scenario = s.status(scenario)
-        parsed_scenario[:feature] = feature[:id]
-        out.push(parsed_scenario)
+        out.push(s.status(scenario, feature[:id]))
       end
     end
     out
   end
 
   class StatusParser
-    def status(scenario)
+    def status(scenario, feature_name)
       name = sanitize("#{scenario[:name]}:#{scenario[:line]}")
       pass = true
-      steps = scenario[:before].to_a +
-              scenario[:steps].to_a +
-              scenario[:after].to_a
+      steps = scenario[:before].to_a + scenario[:steps].to_a + scenario[:after].to_a
       steps.each { |step| pass &&= step[:result][:status].eql?('passed') }
-      { name: name, success: pass }
+      { name: name, success: pass, feature: feature_name }
     end
 
     def sanitize(string)

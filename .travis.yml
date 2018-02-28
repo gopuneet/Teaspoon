@@ -1,5 +1,24 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.3.0
-before_install: gem install bundler -v 1.14.5
+  - 2.3.4
+
+cache:
+  directories:
+    - /home/travis/.rvm/
+
+before_install:
+  - gem install bundler
+  #TODO: Start MySQL && put data on Env vars
+  #TODO: Start Redis && put data on Env vars
+  - bundle install --path vendor/bundle
+
+script:
+  - cd spec
+  - bundle exec rake
+  - cd ../tests
+  - bundle exec cucumber
+
+after_script:
+  #- TODO: Kill MySQL
+  #- TODO: Kill Redis

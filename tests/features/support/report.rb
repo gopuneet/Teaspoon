@@ -152,10 +152,10 @@ module Report
 
   def self.in_database(epoch, branch)
     [
-        { "epoch" => epoch, "branch" => branch, "scenario" => "Passing:5", "success" => true},
-        { "epoch" => epoch, "branch" => branch, "scenario" => "Failing:9", "success" => false},
-        { "epoch" => epoch, "branch" => branch, "scenario" => "Passing:5", "success" => true},
-        { "epoch" => epoch, "branch" => branch, "scenario" => "Failing:9", "success" => false}
+        { "epoch" => epoch, "branch" => branch, "scenario" => "Passing:5", "success" => true, "feature" => 'one-passing-scenario,-one-failing-scenario' },
+        { "epoch" => epoch, "branch" => branch, "scenario" => "Failing:9", "success" => false, "feature" => 'one-passing-scenario,-one-failing-scenario' },
+        { "epoch" => epoch, "branch" => branch, "scenario" => "Passing:5", "success" => true, "feature" => 'one-failing-scenario,-one-passing-scenario' },
+        { "epoch" => epoch, "branch" => branch, "scenario" => "Failing:9", "success" => false, "feature" => 'one-failing-scenario,-one-passing-scenario'}
     ]
   end
 end

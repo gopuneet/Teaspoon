@@ -1,1 +1,1 @@
-INSERT INTO scenarios (branch_id, scenario_id, epoch_id, success) VALUES
+INSERT INTO scenarios (branch_id, scenario_id, epoch_id, feature_id, success) VALUES 

@@ -16,8 +16,9 @@ class MysqlConnection < DBConnection
     query = load_query_file('save.sql')
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
+      feature_id = save_id('feature', status[:feature])
       query += "(#{branch_id}, #{scenario_id}, "\
-               "#{epoch_id}, #{status[:success]}),"
+               "#{epoch_id}, #{feature_id}, #{status[:success]}),"
     end
     @db.query(query.chomp(','))
   end
