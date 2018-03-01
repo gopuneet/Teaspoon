@@ -8,15 +8,13 @@ services:
   - redis-server
 
 cache:
-  directories:
-    - /home/travis/.rvm/
+  - bundler
 
 before_install:
   - gem install bundler
   - bundle install --path vendor/bundle
 
 script:
-  - cd spec
   - bundle exec rake
-  - cd ../tests
+  - cd tests
   - bundle exec cucumber
