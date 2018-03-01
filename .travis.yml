@@ -13,6 +13,9 @@ cache:
 before_install:
   - gem install bundler
   - bundle install --path vendor/bundle
+  - cd tests
+  - bundle install --path vendor/bundle
+  - cd ..
 
 script:
   - bundle exec rake
