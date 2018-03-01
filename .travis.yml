@@ -13,11 +13,10 @@ cache:
 before_install:
   - gem install bundler
   - bundle install --path vendor/bundle
-  - cd tests
-  - bundle install
 
 script:
   - bundle exec rake
   - cd tests
   - echo `pwd`
+  - bundle install
   - bundle exec cucumber
