@@ -3,14 +3,16 @@ language: ruby
 rvm:
   - 2.3.4
 
+services:
+  - mysql
+  - redis-server
+
 cache:
   directories:
     - /home/travis/.rvm/
 
 before_install:
   - gem install bundler
-  #TODO: Start MySQL && put data on Env vars
-  #TODO: Start Redis && put data on Env vars
   - bundle install --path vendor/bundle
 
 script:
@@ -18,7 +20,3 @@ script:
   - bundle exec rake
   - cd ../tests
   - bundle exec cucumber
-
-after_script:
-  #- TODO: Kill MySQL
-  #- TODO: Kill Redis
