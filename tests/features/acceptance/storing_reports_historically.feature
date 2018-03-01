@@ -15,4 +15,4 @@ Feature: Storing Reports Historically
     | Files    |
     | MySQL    |
     | Redis    |
-    | Firebase |
+    #| Firebase |

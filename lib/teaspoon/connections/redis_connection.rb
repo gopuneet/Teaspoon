@@ -2,9 +2,10 @@ require 'redis'
 require 'teaspoon/connections/db_connection'
 
 class RedisConnection < DBConnection
+  @INCREMENT_SUFFIX = 'incr'
+
   def initialize(data)
     @db = Redis.new
-    @incremental_suffix = 'incr'
     super
   end
 
@@ -34,18 +35,17 @@ class RedisConnection < DBConnection
     epochs = pipeline_get('epoch', constraints[:epoch])
 
     keys_array = scenarios.product(features, branches, epochs)
-    keys = []
-    keys_array.each { |i| keys.push(i.join(':')) }
+    keys = keys_array.map { |i| i.join(':') }
 
     r = pipeline_get('scenarios', keys)
-
-    out = []
-    keys_array.each_with_index do |v, i|
-      out.push('epoch' => constraints[:epoch][epochs.index(v[3])],
-               'branch' => constraints[:branch][branches.index(v[2])],
-               'scenario' => constraints[:scenario][scenarios.index(v[0])],
-               'success' => r[i].eql?('true'),
-               'feature' => constraints[:feature][features.index(v[1])])
+    out = keys_array.each_with_index.map do |v, i|
+      {
+       'epoch' => constraints[:epoch][epochs.index(v[3])],
+       'branch' => constraints[:branch][branches.index(v[2])],
+       'scenario' => constraints[:scenario][scenarios.index(v[0])],
+       'success' => r[i].eql?('true'),
+       'feature' => constraints[:feature][features.index(v[1])]
+      }
     end
     out.delete_if { |v| v['success'].nil? }
   end
@@ -64,14 +64,14 @@ class RedisConnection < DBConnection
   end
 
   def configure_increment(increment_prefix)
-    @db.setnx("#{increment_prefix}:#{@incremental_suffix}", '0')
+    @db.setnx("#{increment_prefix}:#{@INCREMENT_SUFFIX}", '0')
   end
 
   def save_id(id_name, value)
     @db.sadd("#{id_name}:values", value)
-    id = @db.get("#{id_name}:#{@incremental_suffix}")
+    id = @db.get("#{id_name}:#{@INCREMENT_SUFFIX}")
     was_set = @db.setnx("#{id_name}:#{value}", id)
-    @db.incr("#{id_name}:#{@incremental_suffix}") if was_set
+    @db.incr("#{id_name}:#{@INCREMENT_SUFFIX}") if was_set
     @db.get("#{id_name}:#{value}")
   end
 end
