@@ -14,10 +14,10 @@ before_install:
   - gem install bundler
   - bundle install --path vendor/bundle
   - cd tests
-  - bundle install --path vendor/bundle
-  - cd ..
+  - bundle install
 
 script:
   - bundle exec rake
   - cd tests
+  - echo `pwd`
   - bundle exec cucumber
