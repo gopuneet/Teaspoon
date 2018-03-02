@@ -16,7 +16,6 @@ before_install:
 
 script:
   - bundle exec rake
-  - cd tests
-  - echo `pwd`
+  - cd /home/travis/build/Typeform/Teaspoon/tests
   - bundle install
   - bundle exec cucumber
