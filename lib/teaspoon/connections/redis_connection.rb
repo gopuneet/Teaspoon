@@ -40,11 +40,11 @@ class RedisConnection < DBConnection
     r = pipeline_get('scenarios', keys)
     out = keys_array.each_with_index.map do |v, i|
       {
-       'epoch' => constraints[:epoch][epochs.index(v[3])],
-       'branch' => constraints[:branch][branches.index(v[2])],
-       'scenario' => constraints[:scenario][scenarios.index(v[0])],
-       'success' => r[i].eql?('true'),
-       'feature' => constraints[:feature][features.index(v[1])]
+        'epoch' => constraints[:epoch][epochs.index(v[3])],
+        'branch' => constraints[:branch][branches.index(v[2])],
+        'scenario' => constraints[:scenario][scenarios.index(v[0])],
+        'success' => r[i].eql?('true'),
+        'feature' => constraints[:feature][features.index(v[1])]
       }
     end
     out.delete_if { |v| v['success'].nil? }
@@ -60,7 +60,7 @@ class RedisConnection < DBConnection
   end
 
   def configure
-    %w(epoch branch scenario feature).each { |id| configure_increment(id) }
+    %w[epoch branch scenario feature].each { |id| configure_increment(id) }
   end
 
   def configure_increment(increment_prefix)
