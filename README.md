@@ -1,10 +1,8 @@
 # Teaspoon
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/teaspoon`. To experiment with that code, run `bin/console` for an interactive prompt.
+Teaspoon is a ruby gem. Its purpose is to keep a historic record of Cucumber scenario failures and successes. These executions are stored over time and branches. 
 
-The purpose of this gem is to save essential data from Cucumber execution reports. At the very least, it saves whether each scenario execution has passed or failed. 
-
-These executions are stored over time and branches. Thus, one can create graphs to see the timed/averaged results of a certain scenario, and draw conclusions from it. Does this one fail too much? Perhaps it is flickering?
+With that information, a developer can identify flaky tests, useless tests, or even functionalities that need testing reinforcements.
 
 ## Installation
 
@@ -16,42 +14,41 @@ gem 'teaspoon'
 
 And then execute:
 
-    $ bundle
+```bash
+bundle install
+```
 
-Or install it yourself as:
+Teaspoon uses Cucumber's JSON report. Ensure your Cucumber executions output such report with
 
-    $ gem install teaspoon
-    
-Observe the `.env.dist` file to add relevant information. Copy to `.env` and fill it.
+```bash
+cucumber --format json
+```
 
-#### At the moment, Teaspoon can work with MySQL, Redis, or plain files and directories.
+Also see the `.env.dist` file to add relevant information. Copy to `.env` and fill it with the preferred database system.
+
+At the moment, Teaspoon can store data in a **MySQL** database, **Redis**, or a files and directories system.
 
 ## Usage
 
-Once installed, you can simply call it from within a Ruby application:
+### Populating the database
+
+Once the installation is complete, add this line to the end of your cucumber execution; for instance, through the use of `Kernel#at_exit`: 
+Once installed, you can simply call Teaspoon from within a Ruby application:
  
 ```ruby
-Teaspoon.measure_and_pour(path_to_report, current_branch = 'master')
+at_exit do
+  Teaspoon.measure_and_pour(path_to_cucumber_report, current_branch_name, current_time_in_epoch)
+end
 ```
 
 This method is also separated should you need only one of the two functionalities. This can be useful to `measure` client-side and `pour` server-side, so as to not send the whole report.
 
 ```ruby
 Teaspoon.measure(path_to_report) #returns data
-Teaspoon.pour(data, current_branch = 'master') #stores data
+Teaspoon.pour(data, current_branch_name, current_time_in_epoch) #stores data
 ```
 
-It could also be called after certain cucumber executions via bash, through an intermediate ruby script.
-
-```ruby
-#filename "measurer.rb"
-
-require 'teaspoon'
-Teaspoon.measure_and_pour(ARGV[0], ARGV[1])
-```
-```bash
-$ ruby measurer.rb "test_suite/logs/report.json" $CURRENT_BRANCH
-```
+### Retrieving the data
 
 Finally, to retrieve information from the database of your choice, use
 
@@ -61,22 +58,40 @@ Teaspoon.spoonful(constraints)
 
 where `constraints` is a Hash.
 * If `constraints` has the key `:key`, it will return the list of existing keys. `:key` can be either `'epoch'`, `'branch'`, or `'scenario'`.
-* Otherwise, `constraints` accepts three non-to-many arrays. For instance:
+* Otherwise, `constraints` accepts three arrays, defining the key values for which we want data. For instance:
 ```ruby
-Teaspoon.spoonful(epoch:[1495725862], branch:  ['master'], scenario: ['Login with basic user', 'Create Typeform', 'Pay with credit card'])
+Teaspoon.spoonful(epoch:[1495725862], 
+                  branch: ['master'], 
+                  scenario: ['Login with basic user', 'Create a form', 'Pay with credit card'])
+```
+
+Will return the status of these three scenarios when executed against *master* on Thursday, 25 May 2017 15:24:22 GMT
+
+An additional key for constraint is `feature`. As with cucumber, it will return all scenarios inside that feature.
+
+The format of the data is:
+```ruby
+[
+    {
+        epoch: Fixnum,
+        branch: String,
+        scenario: String,
+        success: TrueClass || FalseClass,
+        feature: String
+    },
+    #...
+]
 ```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. 
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-### Specifics
-
-This gem can be prone to change, specially on what data to save, and database usage. 
+Teaspoon has (rather recursively) its own functional Cucumber tests, under the `tests/` folder. One must `bundle install` the tests' gems to run it. `bundle exec cucumber` will run them.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub. Come talk to Daniel Giralt so we can both improve this gem!
+Please see this repo's project to see proposed upgrades to this Gem. The most expandable feature is database type connections.
 
