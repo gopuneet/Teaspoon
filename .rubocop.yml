@@ -1,8 +1,8 @@
 AllCops:
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.3.4
 
 Metrics/LineLength:
-  Max: 120
+  Enabled: 300
 
 Documentation:
   Enabled: false
@@ -14,3 +14,14 @@ Style/ClassVars:
   Description: 'Avoid the use of class variables.'
   Enabled: false
 
+Metrics/MethodLength:
+  Max: 50
+
+Documentation:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

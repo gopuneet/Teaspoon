@@ -1,5 +1,21 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.3.0
-before_install: gem install bundler -v 1.14.5
+  - 2.3.4
+
+services:
+  - mysql
+  - redis-server
+
+cache:
+  - bundler
+
+before_install:
+  - bundle install
+
+script:
+  - bundle exec rake
+  - cd tests
+  - export BUNDLE_GEMFILE=Gemfile
+  - bundle install
+  - bundle exec cucumber

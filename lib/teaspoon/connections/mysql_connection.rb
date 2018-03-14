@@ -16,8 +16,9 @@ class MysqlConnection < DBConnection
     query = load_query_file('save.sql')
     statuses.each do |status|
       scenario_id = save_id('scenario', status[:name])
+      feature_id = save_id('feature', status[:feature])
       query += "(#{branch_id}, #{scenario_id}, "\
-               "#{epoch_id}, #{status[:status]}),"
+               "#{epoch_id}, #{feature_id}, #{status[:success]}),"
     end
     @db.query(query.chomp(','))
   end
@@ -47,7 +48,10 @@ class MysqlConnection < DBConnection
       sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") unless constraints.fetch(c, []).empty?
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
-    result_to_hash(@db.query(q)).each { |tuple| tuple[:status] = tuple[:status].eql?(1) }
+    result_to_hash(@db.query(q)).each do |tuple|
+      tuple[:success] = tuple[:success].eql?('1')
+      tuple[:epoch] = tuple[:epoch].to_i
+    end
   end
 
   def ids(key)
@@ -57,7 +61,7 @@ class MysqlConnection < DBConnection
 
   def result_to_hash(result)
     out = []
-    result.each_hash { |row| out.push(row) }
+    result.each_hash { |row| out.push(Hash[row.map { |k,v| [k.to_sym,v] } ]) }
     out
   end
 
