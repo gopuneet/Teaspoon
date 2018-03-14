@@ -11,11 +11,11 @@ cache:
   - bundler
 
 before_install:
-  - gem install bundler
-  - bundle install --path vendor/bundle
+  - bundle install
 
 script:
   - bundle exec rake
-  - cd /home/travis/build/Typeform/Teaspoon/tests
+  - cd tests
+  - export BUNDLE_GEMFILE=Gemfile
   - bundle install
   - bundle exec cucumber
