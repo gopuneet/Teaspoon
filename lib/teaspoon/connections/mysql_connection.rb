@@ -49,8 +49,8 @@ class MysqlConnection < DBConnection
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
     result_to_hash(@db.query(q)).each do |tuple|
-      tuple[:success] = tuple['success'].eql?('1')
-      tuple[:epoch] = tuple['epoch'].to_i
+      tuple[:success] = tuple[:success].eql?('1')
+      tuple[:epoch] = tuple[:epoch].to_i
     end
   end
 
@@ -61,7 +61,7 @@ class MysqlConnection < DBConnection
 
   def result_to_hash(result)
     out = []
-    result.each_hash { |row| out.push(row) }
+    result.each_hash { |row| out.push(Hash[row.map { |k,v| [k.to_sym,v] } ]) }
     out
   end
 
