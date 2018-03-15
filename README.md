@@ -85,20 +85,19 @@ The format of the data is:
 
 ### Retrieval example
 
-Imagine you need to know the test health of scenarios related with credit cards; but you don't know which scenarios there are. You can do
+Imagine you need to know the test historic of scenarios related with credit cards, but you don't know which scenarios there are. You can do
 ```ruby
-scenarios = Teaspoon.spoonful(key:'scenario') 
+scenarios = Teaspoon.spoonful(key: 'scenario') 
 #scenarios will be ['Login with basic user', 'Create a form', 'Pay with credit card']
 ```
 
-From there, you may pick the *Pay with credit card* scenario as a constraint, and get the success story across al branches at all times:
+From there, you may pick the *Pay with credit card* scenario as a constraint, and get the historic across all branches at all times:
 
 ```ruby
 credit_card_test_results = Teaspoon.spoonful(scenario: ['Pay with credit card'])
 ```
 
-Additionally, if you just want to check the results on the *master* branch (a name well known), you can just add it.
-
+Additionally, if you just want to check the results on the **master** branch (a name well known), you can just add it.
 
 ```ruby
 credit_master_test_results = Teaspoon.spoonful(branch: ['master'], scenario: ['Pay with credit card'])
