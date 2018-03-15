@@ -1,12 +1,14 @@
+require 'teaspoon/connections/file_connection'
+require 'teaspoon/connections/firebase_connection'
 require 'teaspoon/connections/mysql_connection'
 require 'teaspoon/connections/redis_connection'
-require 'teaspoon/connections/file_connection'
 
 module ConnectionFactory
   @connection_classes = {
-    MYSQL: MysqlConnection,
-    REDIS: RedisConnection,
-    FILES: FileConnection
+      MYSQL: MysqlConnection,
+      REDIS: RedisConnection,
+      FILES: FileConnection,
+      FIREBASE: FireBaseConnection
   }
 
   def self.create
