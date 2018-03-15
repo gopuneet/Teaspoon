@@ -5,7 +5,7 @@ class RedisConnection < DBConnection
   @INCREMENT_SUFFIX = 'incr'
 
   def initialize(data)
-    @db = Redis.new
+    @db = Redis.new(url: "redis://#{data[:url]}")
     super
   end
 
