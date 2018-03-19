@@ -12,6 +12,7 @@ cache:
 
 before_install:
   - bundle install
+  - gem install dotenv
 
 script:
   - bundle exec rake
