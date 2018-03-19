@@ -17,20 +17,10 @@ class FireBaseConnection < DBConnection
     @db.push(@@PATH, data)
   end
 
-  def close
-
-  end
-
   private
 
   def data(constraints = {})
-    raw = @db.get(@@PATH).body
-    treated = raw.values.flatten.map do |scenario|
-      symbolize_keys(scenario).tap do |scenario|
-        scenario[:scenario] = scenario[:name]
-        scenario.delete(:name)
-      end
-    end
+    treated = get_treated_db
     treated.select do |scenario|
       @@id_keys.map do |key|
         constraints[key] ? constraints[key].include?(scenario[key]) : true
@@ -39,7 +29,18 @@ class FireBaseConnection < DBConnection
   end
 
   def ids(key)
+    treated = get_treated_db
+    treated.map { |scenario| scenario[key.to_sym] }.uniq
+  end
 
+  def get_treated_db
+    raw = @db.get(@@PATH).body
+    raw.values.flatten.map do |scenario|
+      symbolize_keys(scenario).tap do |scenario|
+        scenario[:scenario] = scenario[:name]
+        scenario.delete(:name)
+      end
+    end
   end
 
   def symbolize_keys(hash)
