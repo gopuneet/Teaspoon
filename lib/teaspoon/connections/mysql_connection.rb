@@ -56,7 +56,9 @@ class MysqlConnection < DBConnection
 
   def ids(key)
     q = "SELECT #{key} FROM #{key}_ids"
-    result_to_array(@db.query(q))
+    out = result_to_array(@db.query(q))
+    out = out.map(&:to_i) if key.eql?('epoch')
+    out
   end
 
   def result_to_hash(result)

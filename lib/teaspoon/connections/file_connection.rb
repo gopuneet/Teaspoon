@@ -45,7 +45,7 @@ class FileConnection < DBConnection
   end
 
   def ids(key)
-    return File.open(@epochs).read.split(',').uniq if key.eql?('epoch')
+    return File.open(@epochs).read.split(',').uniq.map(&:to_i) if key.eql?('epoch')
     return branches if key.eql?('branch')
   end
 

@@ -56,7 +56,9 @@ class RedisConnection < DBConnection
 
   def ids(key)
     q = "#{key}:values"
-    @db.smembers(q)
+    out = @db.smembers(q)
+    out = out.map(&:to_i) if key.eql?('epoch')
+    out
   end
 
   def configure
