@@ -24,7 +24,7 @@ Or install it yourself as:
     
 Observe the `.env.dist` file to add relevant information. Copy to `.env` and fill it.
 
-#### At the moment, Teaspoon can work with MySQL, Redis, or plain files and directories.
+#### At the moment, Teaspoon can work with MySQL, Redis, Firebase, or plain files and directories.
 
 ## Usage
 
