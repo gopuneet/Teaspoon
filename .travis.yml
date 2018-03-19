@@ -13,6 +13,7 @@ cache:
 before_install:
   - bundle install
   - gem install dotenv
+  - ruby firebase_json_generator.rb
 
 script:
   - bundle exec rake
