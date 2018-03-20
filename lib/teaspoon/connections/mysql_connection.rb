@@ -48,21 +48,14 @@ class MysqlConnection < DBConnection
       sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") unless constraints.fetch(c, []).empty?
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
-    result_to_hash(@db.query(q)).each do |tuple|
+    @db.query(q, symbolize_keys: true).each do |tuple|
       tuple[:success] = tuple[:success].eql?(1)
-      tuple[:epoch] = tuple[:epoch].to_i
     end
   end
 
   def ids(key)
     q = "SELECT #{key} FROM #{key}_ids"
     result_to_array(@db.query(q))
-  end
-
-  def result_to_hash(result)
-    out = []
-    result.each { |row| out.push(Hash[row.map { |k,v| [k.to_sym,v] } ]) }
-    out
   end
 
   def result_to_array(result)
