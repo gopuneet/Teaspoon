@@ -1,23 +1,21 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.3.4
-
+- 2.3.4
 services:
-  - mysql
-  - redis-server
-
+- mysql
+- redis-server
 cache:
-  - bundler
-
+- bundler
 before_install:
-  - bundle install
-  - gem install dotenv
-  - ruby firebase_json_generator.rb
-
+- openssl aes-256-cbc -K $encrypted_4dc905cf70c6_key -iv $encrypted_4dc905cf70c6_iv
+  -in fb_key -out p_key -d
+- bundle install
+- gem install dotenv
+- ruby firebase_json_generator.rb
 script:
-  - bundle exec rake
-  - cd tests
-  - export BUNDLE_GEMFILE=Gemfile
-  - bundle install
-  - bundle exec cucumber
+- bundle exec rake
+- cd tests
+- export BUNDLE_GEMFILE=Gemfile
+- bundle install
+- bundle exec cucumber
