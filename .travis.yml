@@ -13,7 +13,6 @@ before_install:
   -d
 - bundle install
 - gem install dotenv
-- cat tests/firebase_key.json
 script:
 - bundle exec rake
 - cd tests
