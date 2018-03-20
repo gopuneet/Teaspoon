@@ -26,7 +26,7 @@ cucumber --format json
 
 Also see the `.env.dist` file to add relevant information. Copy to `.env` and fill it with the preferred database system.
 
-At the moment, Teaspoon can store data in a **MySQL** database, **Redis**, or a files and directories system.
+At the moment, Teaspoon can store data in a **MySQL** database, **Redis**, **Firebase**, or a files and directories system.
 
 ## Usage
 
