@@ -4,7 +4,7 @@ PATH
     teaspoon (1.0.0)
       dotenv (~> 2.2.1)
       firebase
-      mysql
+      mysql2
       redis (~> 3.2)
 
 GEM
@@ -59,7 +59,7 @@ GEM
     multi_json (1.13.1)
     multi_test (0.1.2)
     multipart-post (2.0.0)
-    mysql (2.9.1)
+    mysql2 (0.4.10)
     os (0.9.6)
     parallel (1.12.1)
     parser (2.4.0.2)
@@ -106,7 +106,7 @@ DEPENDENCIES
   teaspoon!
 
 RUBY VERSION
-   ruby 2.3.4p301
+   ruby 2.5.0p0
 
 BUNDLED WITH
    1.16.1
