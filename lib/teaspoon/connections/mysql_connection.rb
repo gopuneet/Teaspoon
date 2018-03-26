@@ -1,9 +1,9 @@
-require 'mysql'
+require 'mysql2'
 require 'teaspoon/connections/db_connection'
 
 class MysqlConnection < DBConnection
   def initialize(data)
-    @db = Mysql.connect(data[:url], data[:user], data[:password])
+    @db = Mysql2::Client.new(host: data[:url], username:data[:user], password:data[:password])
     @db_name = data[:db_name]
     @commands_directory = 'mysql_commands'
     super
@@ -38,7 +38,7 @@ class MysqlConnection < DBConnection
     query = "INSERT IGNORE INTO #{id_name}_ids (#{id_name}) VALUES('#{value}');"
     @db.query(query)
     query = "SELECT id FROM #{id_name}_ids WHERE #{id_name} = '#{value}';"
-    @db.query(query).fetch_row.fetch(0)
+    @db.query(query).each(&:itself).first["id"]
   end
 
   def data(constraints)
@@ -48,21 +48,14 @@ class MysqlConnection < DBConnection
       sq.push("#{c} IN (#{constraints[c].map { |e| "'#{e}'" }.join(', ')}) ") unless constraints.fetch(c, []).empty?
     end
     q += " WHERE #{sq.join('AND ')} ;" unless sq.empty?
-    result_to_hash(@db.query(q)).each do |tuple|
-      tuple[:success] = tuple[:success].eql?('1')
-      tuple[:epoch] = tuple[:epoch].to_i
+    @db.query(q, symbolize_keys: true).each do |tuple|
+      tuple[:success] = tuple[:success].eql?(1)
     end
   end
 
   def ids(key)
     q = "SELECT #{key} FROM #{key}_ids"
     result_to_array(@db.query(q))
-  end
-
-  def result_to_hash(result)
-    out = []
-    result.each_hash { |row| out.push(Hash[row.map { |k,v| [k.to_sym,v] } ]) }
-    out
   end
 
   def result_to_array(result)
