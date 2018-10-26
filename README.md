@@ -6,7 +6,7 @@ With that information, a developer can identify flaky tests, useless tests, or e
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add the following line to your application's Gemfile:
 
 ```ruby
 gem 'teaspoon'
@@ -18,7 +18,7 @@ And then execute:
 bundle install
 ```
 
-Teaspoon uses Cucumber's JSON report. Ensure your Cucumber executions output such report with
+Teaspoon uses Cucumber's JSON report. Ensure your Cucumber executions output such report with:
 
 ```bash
 cucumber --format json
@@ -32,8 +32,8 @@ At the moment, Teaspoon can store data in a **MySQL** database, **Redis**, **Fir
 
 ### Populating the database
 
-Once the installation is complete, add this line to the end of your cucumber execution; for instance, through the use of `Kernel#at_exit`: 
-Once installed, you can simply call Teaspoon from within a Ruby application:
+Once the installation is complete, add this line to the end of your cucumber execution; for instance, through the use of `Kernel#at_exit` 
+and then you can simply call Teaspoon from within a Ruby application:
  
 ```ruby
 at_exit do
@@ -50,7 +50,7 @@ Teaspoon.pour(data, current_branch_name, current_time_in_epoch) #stores data
 
 ### Retrieving the data
 
-Finally, to retrieve information from the database of your choice, use
+Finally, to retrieve information from the database of your choice, use:
 
 ```ruby
 Teaspoon.spoonful(constraints)
@@ -58,7 +58,7 @@ Teaspoon.spoonful(constraints)
 
 where `constraints` is a Hash.
 * If `constraints` has the key `:key`, it will return the list of existing keys. `:key` can be either `'epoch'`, `'branch'`, or `'scenario'`.
-* Otherwise, `constraints` accepts three arrays, defining the key values for which we want data. For instance:
+* Otherwise `constraints` accepts three arrays, defining the key values for which we want data. For instance:
 ```ruby
 Teaspoon.spoonful(epoch:[1495725862], 
                   branch: ['master'], 
@@ -85,7 +85,7 @@ The format of the data is:
 
 ### Retrieval example
 
-Imagine you need to know the test historic of scenarios related with credit cards, but you don't know which scenarios there are. You can do
+Imagine you need to know the test historic of scenarios related with credit cards, but you don't know which scenarios there are. You can do:
 ```ruby
 scenarios = Teaspoon.spoonful(key: 'scenario') 
 #scenarios will be ['Login with basic user', 'Create a form', 'Pay with credit card']
@@ -97,7 +97,7 @@ From there, you may pick the *Pay with credit card* scenario as a constraint, an
 credit_card_test_results = Teaspoon.spoonful(scenario: ['Pay with credit card'])
 ```
 
-Additionally, if you just want to check the results on the **master** branch (a name well known), you can just add it.
+Additionally, if you just want to check the results on the **master** branch (a name well known), you can just add it:
 
 ```ruby
 credit_master_test_results = Teaspoon.spoonful(branch: ['master'], scenario: ['Pay with credit card'])
